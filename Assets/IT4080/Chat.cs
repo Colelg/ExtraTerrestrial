@@ -66,8 +66,11 @@ namespace It4080 {
         {
             ChatMessage msg = new ChatMessage();
             msg.message = inputMessage.text;
+            string mess = inputMessage.text;
             inputMessage.text = "";
             sendMessage.Invoke(msg);
+            SendChatMessageServerRpc(mess);
+            
         }
 
 
@@ -99,14 +102,15 @@ namespace It4080 {
         [ClientRpc]
         public void SendChatMessageClientRpc (string message, ClientRpcParams clientRpcParams = default)
         {
+
             DisplayMessageLocally(message);
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         public void SendChatMessageServerRpc(string message, ServerRpcParams serverRpcParams = default)
         {
             Debug.Log($"Host got message: {message}");
-            string newMessage = $"Player #:{serverRpcParams.Receive.SenderClientID}";
+            string newMessage = $"Player #:{serverRpcParams.Receive.SenderClientId}";
             SendChatMessageClientRpc(newMessage);
         }
 
