@@ -134,7 +134,9 @@ public class Main : NetworkBehaviour
     private void HostOnClientConnected(ulong clientId)
     {
         // Tell everyone that a new client connected
-        chatServer.SendSystemMessageServerRpc($"Client {clientId} connected.");
+       chatServer.SendSystemMessageServerRpc($"Client {clientId} connected.");
+        Debug.Log($"Client {clientId} connected.");
+
         // Send the welcome message to the newly connected client only
       //  chatServer.SendSystemMessageServerRpc(
          //   MakeWelcomeMessage(clientId),

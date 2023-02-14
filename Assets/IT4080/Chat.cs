@@ -69,7 +69,7 @@ namespace It4080 {
             string mess = inputMessage.text;
             inputMessage.text = "";
             sendMessage.Invoke(msg);
-            SendChatMessageServerRpc(mess);
+           // SendChatMessageServerRpc(mess);
             
         }
 
@@ -98,7 +98,7 @@ namespace It4080 {
         //--------------------------------
         // RPC
         //-----------------
-
+/*
         [ClientRpc]
         public void SendChatMessageClientRpc (string message, ClientRpcParams clientRpcParams = default)
         {
@@ -119,7 +119,7 @@ namespace It4080 {
             Debug.Log(message);
             txtChatLog.text += $"\n{message}";
         }
-
+*/
         // ----------------
         // Public
         // ----------------
