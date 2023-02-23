@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Net;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 
@@ -16,6 +18,8 @@ public class Main : NetworkBehaviour
     public It4080.NetworkSettings netSettings;
     public ChatServer chatServer;
     public It4080.Chat chat;
+    public Button StartBtn;
+
 
 
     void Start()
@@ -26,6 +30,10 @@ public class Main : NetworkBehaviour
         netSettings.setStatusText("Not Connected");
 
         chat.sendMessage += ChatOnSendMessage;
+
+        StartBtn = GameObject.Find("StartBtn").GetComponent<Button>();
+        StartBtn.onClick.AddListener(btnStartOnClick);
+        StartBtn.gameObject.SetActive(true);
     }
 
 
@@ -110,6 +118,7 @@ public class Main : NetworkBehaviour
 
 
 
+
     // ----------------------
     // Host Events
     // ----------------------
@@ -147,6 +156,16 @@ public class Main : NetworkBehaviour
     private void HostOnClientDisconnected(ulong clientId)
     {
         chatServer.SendSystemMessageServerRpc($"Client {clientId} disconnected.");
+    }
+
+    private void StartGame()
+    {
+        NetworkManager.SceneManager.LoadScene("Arena1", UnityEngine.SceneManagement.LoadSceneMode.Single);
+    }
+
+    private void btnStartOnClick()
+    {
+        StartGame();
     }
 
 
