@@ -8,6 +8,7 @@ public class Player : NetworkBehaviour
     private float movementSpeed = 100f;
     private float rotationSpeed = 300f;
     private Camera _camera;
+    public BulletSpawner bulletSpawner;
 
     private Color[] colors = new Color[]
     {
@@ -17,6 +18,7 @@ public class Player : NetworkBehaviour
 
     public NetworkVariable<Color> netPlayerColor = new NetworkVariable<Color>();
 
+
     public override void OnNetworkSpawn()
     {
         netPlayerColor.OnValueChanged += OnPlayerColorChanged;
@@ -25,8 +27,23 @@ public class Player : NetworkBehaviour
 
         netPlayerColor.Value = colors[colorIndex];
         ApplyPlayerColor();
+
+        bulletSpawner = transform.Find("BulletSpawner").GetComponent<BulletSpawner>();
+
     }
-     
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (IsHost)
+        {
+            if (collision.gameObject.CompareTag("Bullet"))
+            {
+                HostHandleBulletCollision(collision.gameObject);
+            }
+        }
+    }
+
+
     private Vector3 CalcMovementFromInput(float delta)
     {
         bool isShiftKeyDown = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
@@ -80,13 +97,21 @@ public class Player : NetworkBehaviour
         transform.Translate(poschange);
         transform.Rotate(rotChange);
     }
-    
-    
-    
-    
-    
-    
-    
+
+    private void HostHandleBulletCollision(GameObject bullet)
+    {
+        Bullet bulletScript = (Bullet)bullet.GetComponent("Bullet");
+        RequestNextColorServerRpc();
+
+        ulong owner = bullet.GetComponent<NetworkObject>().OwnerClientId;
+    }
+
+
+
+
+
+
+
     // Start is called before the first frame updates
     void Start()
     {
@@ -98,16 +123,24 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Vector3 moveBy = CalcMovementFromInput(Time.deltaTime);
-            Vector3 rotateBy = CalculateRotationFromInput(Time.deltaTime);
-            RequestPositionForMovementServerRpc(moveBy, rotateBy);
-
-            if (Input.GetButtonDown("Fire1"))
-            {
-                Debug.Log($"client color index = {colorIndex} for {NetworkManager.Singleton.LocalClientId}");
-                RequestNextColorServerRpc();
-            }
+            UpdateOwner();
         }
+    }
+
+    void UpdateOwner()
+    {
+        Vector3 moveBy = CalcMovementFromInput(Time.deltaTime);
+        Vector3 rotateBy = CalculateRotationFromInput(Time.deltaTime);
+        RequestPositionForMovementServerRpc(moveBy, rotateBy);
+        if (Input.GetButtonDown("Fire1"))
+        {
+            RequestNextColorServerRpc();
+        }
+        if (Input.GetButtonDown("Fire2"))
+        {
+            bulletSpawner.ShootServerRpc(netPlayerColor.Value);
+        }
+
     }
 
     public void ApplyPlayerColor()
