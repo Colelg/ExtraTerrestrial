@@ -87,7 +87,7 @@ public class Player : NetworkBehaviour
             colorIndex = 0;
         }
 
-        Debug.Log($"host color index = {colorIndex} for {serverRpcParams.Receive.SenderClientId}");
+        Debug.Log($"host color {colorIndex} for {serverRpcParams.Receive.SenderClientId}");
         netPlayerColor.Value = colors[colorIndex];
     }
 
