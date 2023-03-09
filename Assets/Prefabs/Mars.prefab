@@ -10,8 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 944005060865467613}
   - component: {fileID: 5517849094043310471}
+  - component: {fileID: 3937364740660315391}
+  - component: {fileID: 4102243606667732631}
   m_Layer: 0
-  m_Name: BaseBonus
+  m_Name: Mars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,8 +27,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4209837108860052048}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.9787, y: 3.9787, z: 3.9787}
+  m_LocalPosition: {x: 0, y: 1.52, z: 0}
+  m_LocalScale: {x: 8.65606, y: 8.65606, z: 8.65606}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5759913739274132405}
@@ -49,6 +51,34 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3937364740660315391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4209837108860052048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &4102243606667732631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4209837108860052048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c088a6bb4c2909b4d966af8f7ff7c5b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7328903366730035927
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,7 +90,7 @@ GameObject:
   - component: {fileID: 5759913739274132405}
   - component: {fileID: 26722023697377375}
   - component: {fileID: 5722785906544856861}
-  - component: {fileID: 7701799218586365702}
+  - component: {fileID: 4143422310150298058}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -133,7 +163,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &7701799218586365702
+--- !u!135 &4143422310150298058
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,4 +175,4 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -0.000000014901161, z: 0}

@@ -17,7 +17,7 @@ public class BasicPowerUpSpawner : NetworkBehaviour
     public Transform spawnPointTransform;
     public void Start()
     {
-        spawnPointTransform = transform.Find("Sphere");
+        spawnPointTransform = transform.Find("PowerUp");
     }
 
     public void Update()
@@ -46,7 +46,7 @@ public class BasicPowerUpSpawner : NetworkBehaviour
     private void spawnBonus()
     {
         Vector3 Spawnpos = transform.position;
-        Spawnpos.y = 2;
+        Spawnpos.y = 7;
         Rigidbody bonusSpawn = Instantiate(
         bonusPrefab, Spawnpos, Quaternion.identity);
         bonusSpawn.GetComponent<NetworkObject>().Spawn();

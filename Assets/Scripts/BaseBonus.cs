@@ -20,7 +20,7 @@ public class BaseBonus : NetworkBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Collision");
-        if (IsOwner)
+        if (IsServer)
         {
             Destroy(gameObject);
         }
