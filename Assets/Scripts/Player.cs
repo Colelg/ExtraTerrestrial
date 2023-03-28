@@ -115,7 +115,7 @@ public class Player : NetworkBehaviour
             NetworkManager.Singleton.ConnectedClients[owner].PlayerObject.GetComponent<Player>();
         otherPlayer.netPlayerScore.Value += 1;
         Debug.Log("The host handled the bullet collision");
-        UpdateScore();
+
         Destroy(bullet);
     }
 
