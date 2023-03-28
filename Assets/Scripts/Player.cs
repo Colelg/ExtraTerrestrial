@@ -10,6 +10,7 @@ public class Player : NetworkBehaviour
     private Camera _camera;
     public BulletSpawner bulletSpawner;
 
+
     private Color[] colors = new Color[]
     {
         Color.black, Color.blue, Color.cyan, Color.gray, Color.green, Color.yellow
@@ -17,6 +18,7 @@ public class Player : NetworkBehaviour
     private int colorIndex = 0;
 
     public NetworkVariable<Color> netPlayerColor = new NetworkVariable<Color>();
+    public NetworkVariable<int> netPlayerScore = new NetworkVariable<int>(100);
 
 
     public override void OnNetworkSpawn()
@@ -34,11 +36,15 @@ public class Player : NetworkBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("There was collision");
+        Debug.Log($"Score is {netPlayerScore.Value}");
         if (IsHost)
         {
             if (collision.gameObject.CompareTag("Bullet"))
             {
                 HostHandleBulletCollision(collision.gameObject);
+                Debug.Log("Bullet Player Collision");
+                UpdateScore();
             }
         }
     }
@@ -60,7 +66,7 @@ public class Player : NetworkBehaviour
 
         return moveVect;
     }
-    
+
     private Vector3 CalculateRotationFromInput(float delta)
     {
         bool isShiftKeyDown = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
@@ -76,7 +82,7 @@ public class Player : NetworkBehaviour
 
         return rotVect;
     }
-    
+
 
     [ServerRpc]
     void RequestNextColorServerRpc(ServerRpcParams serverRpcParams = default)
@@ -101,11 +107,26 @@ public class Player : NetworkBehaviour
     private void HostHandleBulletCollision(GameObject bullet)
     {
         Bullet bulletScript = (Bullet)bullet.GetComponent("Bullet");
+        netPlayerScore.Value -= 1;
         RequestNextColorServerRpc();
 
         ulong owner = bullet.GetComponent<NetworkObject>().OwnerClientId;
+        Player otherPlayer =
+            NetworkManager.Singleton.ConnectedClients[owner].PlayerObject.GetComponent<Player>();
+        otherPlayer.netPlayerScore.Value += 1;
+        Debug.Log("The host handled the bullet collision");
+        UpdateScore();
+        Destroy(bullet);
     }
 
+    private void UpdateScore()
+    {
+        if (IsOwner)
+        {
+            netPlayerScore.Value -= 1;
+            Debug.Log($"Score: {netPlayerScore.Value}");
+        }
+    }
 
 
 
@@ -115,7 +136,7 @@ public class Player : NetworkBehaviour
     // Start is called before the first frame updates
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -145,9 +166,9 @@ public class Player : NetworkBehaviour
 
     public void ApplyPlayerColor()
     {
-         transform.Find("body").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
-         //transform.Find("LArm").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
-         //transform.Find("RArm").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+        transform.Find("body").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+        //transform.Find("LArm").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+        //transform.Find("RArm").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
     }
 
     public void OnPlayerColorChanged(Color previous, Color current)
