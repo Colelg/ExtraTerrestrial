@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 1602925312861768364}
   - component: {fileID: 4083021865790369876}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: Probe1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 3467652246046110663}
   - component: {fileID: 3210386322497726160}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: Antenna1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -397,6 +397,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletSpawner: {fileID: 0}
+  txtScore: {fileID: 0}
   netPlayerColor:
     m_InternalValue: {r: 0, g: 0, b: 0, a: 0}
   netPlayerScore:
@@ -454,8 +455,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 5, y: 10, z: 5}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 2.8735101, y: 10, z: 3.5655344}
+  m_Center: {x: -0.030121079, y: 0, z: 0.053059697}
 --- !u!1 &2958636301925488919
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,7 +651,7 @@ GameObject:
   - component: {fileID: 4898138436533308852}
   - component: {fileID: 6152888941064179757}
   m_Layer: 0
-  m_Name: Sphere (1)
+  m_Name: Probe2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -845,7 +846,7 @@ GameObject:
   - component: {fileID: 6559821975344207914}
   - component: {fileID: 6869742720327516275}
   m_Layer: 0
-  m_Name: Cylinder (1)
+  m_Name: Antenna2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -955,7 +956,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5189150600992693677}
   m_LocalRotation: {x: -0, y: 0.03849615, z: -0, w: 0.9992588}
-  m_LocalPosition: {x: 0.18, y: 2.888, z: 1.795}
+  m_LocalPosition: {x: 0.31, y: 3.19, z: 3.24}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

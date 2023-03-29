@@ -9,7 +9,7 @@ public class Player : NetworkBehaviour
     private float rotationSpeed = 300f;
     private Camera _camera;
     public BulletSpawner bulletSpawner;
-
+    public TMPro.TMP_Text txtScore;
 
     private Color[] colors = new Color[]
     {
@@ -31,20 +31,33 @@ public class Player : NetworkBehaviour
         ApplyPlayerColor();
 
         bulletSpawner = transform.Find("BulletSpawner").GetComponent<BulletSpawner>();
+        if (IsClient)
+        {
+            netPlayerScore.OnValueChanged += ClientOnScoreChanged;
+        }
+
+    }
+
+    void ClientOnScoreChanged(int previous, int current)
+    {
+        txtScore.text = $"Score {netPlayerScore.Value}";
+
+        if (IsOwner)
+        {
+            Debug.Log($"Client {NetworkManager.Singleton.LocalClientId} Score is now {netPlayerScore.Value} ({previous} --> {current})");
+        }
 
     }
 
     void OnCollisionEnter(Collision collision)
     {
         Debug.Log("There was collision");
-        Debug.Log($"Score is {netPlayerScore.Value}");
         if (IsHost)
         {
             if (collision.gameObject.CompareTag("Bullet"))
             {
                 HostHandleBulletCollision(collision.gameObject);
                 Debug.Log("Bullet Player Collision");
-                UpdateScore();
             }
         }
     }
@@ -83,17 +96,23 @@ public class Player : NetworkBehaviour
         return rotVect;
     }
 
-
+    
     [ServerRpc]
     void RequestNextColorServerRpc(ServerRpcParams serverRpcParams = default)
     {
-        colorIndex += 1;
-        if (colorIndex > colors.Length - 1)
-        {
-            colorIndex = 0;
-        }
 
         Debug.Log($"host color {colorIndex} for {serverRpcParams.Receive.SenderClientId}");
+        netPlayerColor.Value = colors[colorIndex];
+        ServerChangeColor();
+    }
+    
+    void ServerChangeColor()
+    {
+        colorIndex += 1;
+        if(colorIndex > colors.Length) {
+            colorIndex = 0;
+
+        }
         netPlayerColor.Value = colors[colorIndex];
     }
 
@@ -108,7 +127,7 @@ public class Player : NetworkBehaviour
     {
         Bullet bulletScript = (Bullet)bullet.GetComponent("Bullet");
         netPlayerScore.Value -= 1;
-        RequestNextColorServerRpc();
+        ServerChangeColor();
 
         ulong owner = bullet.GetComponent<NetworkObject>().OwnerClientId;
         Player otherPlayer =
@@ -167,8 +186,11 @@ public class Player : NetworkBehaviour
     public void ApplyPlayerColor()
     {
         transform.Find("body").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
-        //transform.Find("LArm").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
-        //transform.Find("RArm").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+        transform.Find("Antenna1").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+        transform.Find("Antenna1").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+        transform.Find("Probe1").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+        transform.Find("Probe1").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+
     }
 
     public void OnPlayerColorChanged(Color previous, Color current)
