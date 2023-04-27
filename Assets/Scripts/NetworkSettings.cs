@@ -9,6 +9,13 @@ namespace It4080
 {
     public class NetworkSettings : MonoBehaviour
     {
+        public event Action<IPAddress, ushort> startServer;
+        public event Action<IPAddress, ushort> startHost;
+        public event Action<IPAddress, ushort> startClient;
+
+        private IPAddress ipAddress = IPAddress.Parse("0.0.0.0");
+        private ushort port = 0;
+
         public Button btnHost;
         public Button btnServer;
         public Button btnClient;
@@ -17,13 +24,28 @@ namespace It4080
         public TMPro.TMP_Text txtStatus;
         public GameObject ControlsContainer;
 
-        public event Action<IPAddress, ushort> startServer;
-        public event Action<IPAddress, ushort> startHost;
-        public event Action<IPAddress, ushort> startClient;
+        private bool showHost = true;
+        public bool ShowHost {
+            get => showHost;
+            set => setShowHost(value);
+        }
 
-        private IPAddress ipAddress = IPAddress.Parse("0.0.0.0");
-        private ushort port = 0;
+        private bool showServer = true;
+        public bool ShowServer {
+            get => showServer;
+            set => setShowServer(value);
+        }
+        
+        private void setShowHost(bool val)
+        {
+            showHost = val;
+            btnServer.gameObject.SetActive(val);
+        }
 
+        private void setShowServer(bool val){
+            showServer = val;
+            btnServer.gameObject.SetActive(val);
+        }
 
         void Start()
         {

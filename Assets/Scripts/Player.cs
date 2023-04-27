@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using TMPro;
 
 public class Player : NetworkBehaviour
 {
@@ -9,7 +10,8 @@ public class Player : NetworkBehaviour
     private float rotationSpeed = 300f;
     private Camera _camera;
     public BulletSpawner bulletSpawner;
-    public TMPro.TMP_Text txtScore;
+    public TMPro.TMP_Text txtHealth;
+    public TMPro.TMP_Text txtPlanets;
 
     private Color[] colors = new Color[]
     {
@@ -19,6 +21,8 @@ public class Player : NetworkBehaviour
 
     public NetworkVariable<Color> netPlayerColor = new NetworkVariable<Color>();
     public NetworkVariable<int> netPlayerScore = new NetworkVariable<int>(100);
+    public NetworkVariable<int> netBulletSpeed = new NetworkVariable<int>(40);
+    public NetworkVariable<int> PlanetsDestroyed = new NetworkVariable<int>(0);
 
 
     public override void OnNetworkSpawn()
@@ -29,6 +33,7 @@ public class Player : NetworkBehaviour
 
         netPlayerColor.Value = colors[colorIndex];
         ApplyPlayerColor();
+        UpdateScoreDis();
 
         bulletSpawner = transform.Find("BulletSpawner").GetComponent<BulletSpawner>();
         if (IsClient)
@@ -40,8 +45,7 @@ public class Player : NetworkBehaviour
 
     void ClientOnScoreChanged(int previous, int current)
     {
-        txtScore.text = $"Score {netPlayerScore.Value}";
-
+        UpdateScoreDis();
         if (IsOwner)
         {
             Debug.Log($"Client {NetworkManager.Singleton.LocalClientId} Score is now {netPlayerScore.Value} ({previous} --> {current})");
@@ -127,14 +131,19 @@ public class Player : NetworkBehaviour
     {
         Bullet bulletScript = (Bullet)bullet.GetComponent("Bullet");
         netPlayerScore.Value -= 1;
+        netBulletSpeed.Value += 5;
+
         ServerChangeColor();
+
 
         ulong owner = bullet.GetComponent<NetworkObject>().OwnerClientId;
         Player otherPlayer =
             NetworkManager.Singleton.ConnectedClients[owner].PlayerObject.GetComponent<Player>();
         otherPlayer.netPlayerScore.Value += 1;
-        Debug.Log("The host handled the bullet collision");
 
+        
+        Debug.Log("The host handled the bullet collision");
+        UpdateScoreDis();
         Destroy(bullet);
     }
 
@@ -147,6 +156,16 @@ public class Player : NetworkBehaviour
         }
     }
 
+    private void UpdateScoreDis()
+    {
+        if(IsOwner)
+        {
+            print("Score is being updated on Gui");
+            txtHealth.text = "Health: " + netPlayerScore.Value.ToString();
+
+
+        }
+    }
 
 
 
@@ -187,9 +206,9 @@ public class Player : NetworkBehaviour
     {
         transform.Find("body").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
         transform.Find("Antenna1").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
-        transform.Find("Antenna1").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+        transform.Find("Antenna2").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
         transform.Find("Probe1").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
-        transform.Find("Probe1").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
+        transform.Find("Probe2").GetComponent<MeshRenderer>().material.color = netPlayerColor.Value;
 
     }
 

@@ -63,12 +63,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a78673f88d1f06544b9cfa4be3e44e7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bonusPrefab: {fileID: 5517849094043310471, guid: d4a85673b76f6d44b94fa9706a86d8ae, type: 3}
+  powerUp: {fileID: 5517849094043310471, guid: d21e6c52d684fbb46bda9f21d220ece9, type: 3}
   spawnOnLoad: 1
-  refreshTime: 10
-  timeUntilSpawn: 0
-  currentBonus: {fileID: 0}
-  spawnPointTransform: {fileID: 0}
+  spawnDelay: 3
 --- !u!1 &349388906224414458
 GameObject:
   m_ObjectHideFlags: 0

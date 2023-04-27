@@ -6,8 +6,10 @@ using Unity.Netcode;
 public class BulletSpawner : NetworkBehaviour
 {
     public Rigidbody bullet;
-    private float bulletSpeed = 40f;
-    private float timeToLive = 2f;
+    private int bulletSpeed = 100;
+    private float timeToLive = 5f;
+
+    public NetworkVariable<int> BulletSpeed = new NetworkVariable<int>(40);
 
     [ServerRpc]
     public void ShootServerRpc(Color color, ServerRpcParams rpcParams = default)

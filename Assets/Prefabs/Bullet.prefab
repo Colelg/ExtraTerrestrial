@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: -5097639567079965544}
   - component: {fileID: 6221677388821969789}
   - component: {fileID: -937310205337190855}
+  - component: {fileID: 1713551103253027064}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Bullet
@@ -61,7 +62,7 @@ Transform:
   m_GameObject: {fileID: 8776777200015103428}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.29205, y: 1, z: 1.169}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2584554827000319912}
@@ -151,6 +152,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4481a09a434a7904bb59bac029e5ac66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1713551103253027064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8776777200015103428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 11400000, guid: 2f84d4b376371064f888626fcbc92020, type: 2}
+  isGlobal: 0
+  blendDistance: 0
+  weight: 1
+  priority: 0
 --- !u!1 &9144947761567026092
 GameObject:
   m_ObjectHideFlags: 0
@@ -179,7 +197,7 @@ Transform:
   m_GameObject: {fileID: 9144947761567026092}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3.6084, y: 1, z: 1.9139}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3509840200229669403}
@@ -213,7 +231,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 00d0196f6b0125d4790bedd5b235b4b5, type: 2}
+  - {fileID: 2100000, guid: a58a3f9ff71473648a7d3815d642eee5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

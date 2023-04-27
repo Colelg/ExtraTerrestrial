@@ -9,7 +9,6 @@ using System.Net;
 namespace It4080 { 
     public class Chat : NetworkBehaviour
     {
-        public ChatServer chatserver;
         public const string MSG_SYSTEM = "SYSTEM";
 
         public class ChatMessage
@@ -18,7 +17,6 @@ namespace It4080 {
             public string from = null;
             public string message = null;
         }
-
 
         public Button btnSend;
         public TMPro.TMP_InputField inputMessage;
@@ -38,7 +36,6 @@ namespace It4080 {
         public override void OnNetworkSpawn() {
             base.OnNetworkSpawn();
             enabled = true;
-            SystemMessage("Players Connecting...");
             clientId = NetworkManager.Singleton.LocalClientId;
         }
 
@@ -53,12 +50,11 @@ namespace It4080 {
 
             if(msg.from == MSG_SYSTEM)
             {
-                txtChatLog.text += $"<<{from}>>{msg.message}\n";
+                txtChatLog.text += $"<SYS> {msg.message}\n";
             } else
             {
-                txtChatLog.text += $"[{from}]{msg.message}\n";
-            }
-            
+                txtChatLog.text += $"[{from}] {msg.message}\n";
+            }            
         }
 
 
@@ -66,11 +62,11 @@ namespace It4080 {
         {
             ChatMessage msg = new ChatMessage();
             msg.message = inputMessage.text;
-            string mess = inputMessage.text;
             inputMessage.text = "";
-            sendMessage.Invoke(msg);
-           // SendChatMessageServerRpc(mess);
-            
+            if(sendMessage != null)
+            {
+                sendMessage.Invoke(msg);
+            }            
         }
 
 
@@ -95,31 +91,7 @@ namespace It4080 {
             enable(false);
         }
 
-        //--------------------------------
-        // RPC
-        //-----------------
-/*
-        [ClientRpc]
-        public void SendChatMessageClientRpc (string message, ClientRpcParams clientRpcParams = default)
-        {
 
-            DisplayMessageLocally(message);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void SendChatMessageServerRpc(string message, ServerRpcParams serverRpcParams = default)
-        {
-            Debug.Log($"Host got message: {message}");
-            string newMessage = $"Player #:{serverRpcParams.Receive.SenderClientId}";
-            SendChatMessageClientRpc(newMessage);
-        }
-
-        public void DisplayMessageLocally(string message)
-        {
-            Debug.Log(message);
-            txtChatLog.text += $"\n{message}";
-        }
-*/
         // ----------------
         // Public
         // ----------------
@@ -142,8 +114,6 @@ namespace It4080 {
             msg.message = text;
             msg.from = MSG_SYSTEM;
             DisplayMessage(msg);
-            Debug.Log($"system msg:  {text}");
-            Debug.Log(txtChatLog.text);
         }
     }
 }
