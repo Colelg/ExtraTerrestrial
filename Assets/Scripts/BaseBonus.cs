@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.UIElements;
+using Unity.VisualScripting;
 
 public class BaseBonus : NetworkBehaviour
 
@@ -18,7 +19,9 @@ public class BaseBonus : NetworkBehaviour
     {
         Debug.Log($"I am {this}");
         Vector3 rotateby = CalculateRotation(Time.deltaTime);
-
+        PlanetSpawn.PlanetsDestroyed.OnValueChanged -= ClientOnPlanetDestroyed;
+        PlanetHealth.OnValueChanged += ClientOnPlanetChanged;
+        UpdatePlanetHealth();
     }
     private Vector3 CalculateRotation(float delta)
     {
@@ -49,14 +52,18 @@ public class BaseBonus : NetworkBehaviour
             txtScore.text = "Health: " + PlanetHealth.Value.ToString();
             PlanetHealth.OnValueChanged += ClientOnPlanetChanged;
             //HostHandleBulletCollision(collision.gameObject);
+            
             if (PlanetHealth.Value == 0)
             {
 
+
                 Destroy(gameObject);
+                HostHandleBulletCollision(gameObject);
 
                 //if planet health is less than or equal to zero, we go from collision object back to player object, increase their planets destroyed, like bullet collision script
                 //get owner id, compare to player
             }
+            
         }
     }
 
@@ -72,8 +79,17 @@ public class BaseBonus : NetworkBehaviour
         UpdatePlanetScore();
     }
 
-    
 
+    void HostHandleBulletCollision2(GameObject bullet)
+    {
+        Bullet bulletScript = (Bullet)bullet.GetComponent("Bullet");
+
+        ulong owner = bullet.GetComponent<NetworkObject>().OwnerClientId;
+        Player otherPlayer =
+            NetworkManager.Singleton.ConnectedClients[owner].PlayerObject.GetComponent<Player>();
+
+        otherPlayer.PlanetsDestroyed.Value += 1;
+    }
 
 
     void ClientOnPlanetChanged(int previous, int current) 

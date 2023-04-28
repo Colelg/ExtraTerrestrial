@@ -16,6 +16,7 @@ public class BasicPowerUpSpawner : NetworkBehaviour
 
     public void Start()
     {
+
     }
 
 

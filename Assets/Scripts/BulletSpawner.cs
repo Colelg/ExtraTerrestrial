@@ -9,7 +9,6 @@ public class BulletSpawner : NetworkBehaviour
     private int bulletSpeed = 100;
     private float timeToLive = 5f;
 
-    public NetworkVariable<int> BulletSpeed = new NetworkVariable<int>(40);
 
     [ServerRpc]
     public void ShootServerRpc(Color color, ServerRpcParams rpcParams = default)
@@ -19,6 +18,13 @@ public class BulletSpawner : NetworkBehaviour
         newBullet.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId);
         newBullet.velocity = transform.forward * bulletSpeed;
         Destroy(newBullet.gameObject, timeToLive);
+
+        ulong owner = bullet.GetComponent<NetworkObject>().OwnerClientId;
+        Player otherPlayer =
+    NetworkManager.Singleton.ConnectedClients[owner].PlayerObject.GetComponent<Player>();
+
+        bulletSpeed = bulletSpeed + otherPlayer.netBulletSpeed.Value;
+        Debug.Log("Bullet Speed increased to: " + bulletSpeed);
     }
 
 }

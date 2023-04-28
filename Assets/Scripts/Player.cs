@@ -1,17 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using TMPro;
 
 public class Player : NetworkBehaviour
 {
-    private float movementSpeed = 100f;
-    private float rotationSpeed = 300f;
+    private float movementSpeed = 100;
+    private float rotationSpeed = 300;
     private Camera _camera;
     public BulletSpawner bulletSpawner;
     public TMPro.TMP_Text txtHealth;
     public TMPro.TMP_Text txtPlanets;
+    public TMPro.TMP_Text txtSpeed;
+    public TMPro.TMP_Text txtBulletSpeed;
+    public TMPro.TMP_Text txtHits;
 
     private Color[] colors = new Color[]
     {
@@ -20,9 +20,12 @@ public class Player : NetworkBehaviour
     private int colorIndex = 0;
 
     public NetworkVariable<Color> netPlayerColor = new NetworkVariable<Color>();
-    public NetworkVariable<int> netPlayerScore = new NetworkVariable<int>(100);
-    public NetworkVariable<int> netBulletSpeed = new NetworkVariable<int>(40);
+    public NetworkVariable<int> netPlayerHealth = new NetworkVariable<int>(100);
+    public NetworkVariable<int> netBulletSpeed = new NetworkVariable<int>(150);
     public NetworkVariable<int> PlanetsDestroyed = new NetworkVariable<int>(0);
+    public NetworkVariable<int> netPlayerSpeed = new NetworkVariable<int>(100);
+    public NetworkVariable<float> PlayerAddedSpeed = new NetworkVariable<float>();
+    public NetworkVariable<int> netPlayerHits = new NetworkVariable<int>(0);
 
 
     public override void OnNetworkSpawn()
@@ -38,7 +41,7 @@ public class Player : NetworkBehaviour
         bulletSpawner = transform.Find("BulletSpawner").GetComponent<BulletSpawner>();
         if (IsClient)
         {
-            netPlayerScore.OnValueChanged += ClientOnScoreChanged;
+            netPlayerHealth.OnValueChanged += ClientOnScoreChanged;
         }
 
     }
@@ -48,7 +51,7 @@ public class Player : NetworkBehaviour
         UpdateScoreDis();
         if (IsOwner)
         {
-            Debug.Log($"Client {NetworkManager.Singleton.LocalClientId} Score is now {netPlayerScore.Value} ({previous} --> {current})");
+            Debug.Log($"Client {NetworkManager.Singleton.LocalClientId} Score is now {netPlayerHealth.Value} ({previous} --> {current})");
         }
 
     }
@@ -79,8 +82,7 @@ public class Player : NetworkBehaviour
         }
 
         Vector3 moveVect = new Vector3(x_move, 0, z_move);
-        moveVect *= movementSpeed * delta;
-
+        moveVect *= PlayerAddedSpeed.Value + movementSpeed * delta;
         return moveVect;
     }
 
@@ -100,7 +102,7 @@ public class Player : NetworkBehaviour
         return rotVect;
     }
 
-    
+
     [ServerRpc]
     void RequestNextColorServerRpc(ServerRpcParams serverRpcParams = default)
     {
@@ -109,11 +111,12 @@ public class Player : NetworkBehaviour
         netPlayerColor.Value = colors[colorIndex];
         ServerChangeColor();
     }
-    
+
     void ServerChangeColor()
     {
         colorIndex += 1;
-        if(colorIndex > colors.Length) {
+        if (colorIndex > colors.Length)
+        {
             colorIndex = 0;
 
         }
@@ -130,8 +133,7 @@ public class Player : NetworkBehaviour
     private void HostHandleBulletCollision(GameObject bullet)
     {
         Bullet bulletScript = (Bullet)bullet.GetComponent("Bullet");
-        netPlayerScore.Value -= 1;
-        netBulletSpeed.Value += 5;
+        netPlayerHealth.Value -= 1;
 
         ServerChangeColor();
 
@@ -139,9 +141,24 @@ public class Player : NetworkBehaviour
         ulong owner = bullet.GetComponent<NetworkObject>().OwnerClientId;
         Player otherPlayer =
             NetworkManager.Singleton.ConnectedClients[owner].PlayerObject.GetComponent<Player>();
-        otherPlayer.netPlayerScore.Value += 1;
 
-        
+        otherPlayer.netPlayerSpeed.Value += 1;
+        otherPlayer.netBulletSpeed.Value += 1;
+        otherPlayer.netPlayerHits.Value += 1;
+        otherPlayer.PlayerAddedSpeed.Value = 1;
+        if (otherPlayer.netPlayerHealth.Value < 100)
+        {
+            otherPlayer.netPlayerHealth.Value += 1;
+        }
+
+        if(netPlayerHits.Value < 5)
+        {
+            otherPlayer.PlayerAddedSpeed.Value += 1;
+            otherPlayer.netPlayerSpeed.Value += 1;
+        }
+
+
+
         Debug.Log("The host handled the bullet collision");
         UpdateScoreDis();
         Destroy(bullet);
@@ -151,17 +168,21 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
-            netPlayerScore.Value -= 1;
-            Debug.Log($"Score: {netPlayerScore.Value}");
+            netPlayerHealth.Value -= 1;
+            Debug.Log($"Score: {netPlayerHealth.Value}");
         }
     }
 
     private void UpdateScoreDis()
     {
-        if(IsOwner)
+        if (IsOwner)
         {
             print("Score is being updated on Gui");
-            txtHealth.text = "Health: " + netPlayerScore.Value.ToString();
+            txtHealth.text = "Health: " + netPlayerHealth.Value.ToString();
+            txtHits.text = "Enemies Hit: " + netPlayerHits.Value.ToString();
+            txtBulletSpeed.text = "Bullet Speed: " + netBulletSpeed.Value.ToString();
+            txtPlanets.text = "Planets Destroyed: " + PlanetsDestroyed.Value.ToString();
+            txtSpeed.text = "Speed: " + PlayerAddedSpeed.Value.ToString();   
 
 
         }
@@ -183,6 +204,7 @@ public class Player : NetworkBehaviour
         if (IsOwner)
         {
             UpdateOwner();
+            UpdateScoreDis();
         }
     }
 
